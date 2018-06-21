@@ -1,6 +1,6 @@
-﻿using MyShop.Core.Models;
+﻿using MyShop.Core.Contracts;
+using MyShop.Core.Models;
 using MyShop.Core.ViewModels;
-using MyShop.DataAccess.InMemory;
 using System.Collections.Generic;
 using System.Linq;
 using System.Web.Mvc;
@@ -9,14 +9,14 @@ namespace MyShop.WebUI.Controllers
 {
     public class ProductManagerController : Controller
     {
-        InMemoryRepository<Product> context;
-        InMemoryRepository<ProductCategory> productCategories;
+        IRepository<Product> context;
+        IRepository<ProductCategory> productCategories;
 
 
-        public ProductManagerController()
+        public ProductManagerController(IRepository<Product> productContext, IRepository<ProductCategory> productCategoryContext)
         {
-            context = new InMemoryRepository<Product>();
-            productCategories = new InMemoryRepository<ProductCategory>();
+            context = productContext;
+            productCategories = productCategoryContext;
         }
         // GET: ProductManager
         public ActionResult Index()
@@ -43,7 +43,7 @@ namespace MyShop.WebUI.Controllers
             else
             {
                 context.Insert(product);
-                context.commit();
+                context.Commit();
 
                 return RedirectToAction("Index");
             }
@@ -87,7 +87,7 @@ namespace MyShop.WebUI.Controllers
                 productToEdit.Name = product.Name;
                 productToEdit.Price = product.Price;
 
-                context.commit();
+                context.Commit();
 
                 return RedirectToAction("Index");
 
@@ -119,7 +119,7 @@ namespace MyShop.WebUI.Controllers
             else
             {
                 context.Delete(Id);
-                context.commit();
+                context.Commit();
                 return RedirectToAction("Index");
 
 
